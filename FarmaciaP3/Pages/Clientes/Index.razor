@@ -1,0 +1,56 @@
+﻿
+@page "/clientes"
+@using FarmaciaP3.Data;
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+<h3>Area de clientes</h3>
+
+@if (oRespuesta != null && oRespuesta.Data != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Celular</th>
+                <th>Telefono</th>
+                <th>Correo</th>
+                <th>Fecha Nacimiento</th>
+                <th>Gestion De Usuario</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cliente in oRespuesta.Data)
+            {
+                <tr>
+                    <td>@cliente.Id</td>
+                    <td>@cliente.Nombres</td>
+                    <td>@cliente.Apellidos</td>
+                    <td>@cliente.Celular</td>
+                    <td>@cliente.Telefono</td>
+                    <td>@cliente.Correo</td>
+                    <td>@cliente.FechaNac</td>
+                    <td>
+                        <a class="btn btn-success">Editar</a>
+                        <button class="btn btn-danger">Borrar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <text>Cargando</text>
+}
+
+@code {
+    public string Url = "/api/Cliente/";
+    public Respuestas oRespuesta = new Respuestas();
+
+    protected override async Task OnInitializedAsync() =>
+        oRespuesta = await Http.GetFromJsonAsync<Respuestas>(Url);
+}
