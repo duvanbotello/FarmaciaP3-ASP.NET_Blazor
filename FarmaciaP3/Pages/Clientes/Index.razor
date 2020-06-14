@@ -6,7 +6,7 @@
 @inject HttpClient Http
 <h3>Area de clientes</h3>
 
-<div>
+<div class="mb-4">
     <a class="btn btn-success" href="nuevo-cliente">Nuevo Cliente</a>
 </div>
 
@@ -37,8 +37,8 @@
                     <td>@cliente.Correo</td>
                     <td>@cliente.FechaNac</td>
                     <td>
-                        <a class="btn btn-success">Editar</a>
-                        <button class="btn btn-danger">Borrar</button>
+                        <a href="/editar-cliente/@cliente.Id" class="btn btn-success">Editar</a>
+                        <a href="/eliminar-cliente/@cliente.Id" class="btn btn-danger">Borrar</a>
                     </td>
                 </tr>
             }
@@ -53,8 +53,8 @@ else
 
 @code {
     public string Url = "/api/Cliente/";
-    public Respuestas oRespuesta = new Respuestas();
+    public Respuestas<List<Cliente>> oRespuesta = new Respuestas<List<Cliente>>();
 
     protected override async Task OnInitializedAsync() =>
-        oRespuesta = await Http.GetFromJsonAsync<Respuestas>(Url);
+        oRespuesta = await Http.GetFromJsonAsync<Respuestas<List<Cliente>>>(Url);
 }

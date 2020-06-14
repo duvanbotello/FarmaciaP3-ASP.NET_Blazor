@@ -1,4 +1,5 @@
 ﻿@page "/nuevo-cliente"
+@page "/editar-cliente/{Id:int}"
 @using Data;
 @using System.Net.Http
 @using System.Net.Http.Json
@@ -8,7 +9,7 @@
 <h3>Registrar un nuevo cliente</h3>
 
 <EditForm Model="@oCliente">
-    <div class="container-fluid">
+    <div class="container">
         <div class="form-group row mb-1">
             <label>Nombres:</label>
             <div class="col-sm-9">
@@ -54,14 +55,38 @@
 </EditForm>
 
 @code {
+
+    [Parameter]
+    public int Id { get; set; }
     Cliente oCliente = new Cliente();
-    Respuestas oRespuesta = new Respuestas();
-    public string Url = "/api/Cliente/";
+    Respuestas<object> oRespuesta = new Respuestas<object>();
+    Respuestas<Cliente> oRespuestaCliente = new Respuestas<Cliente>();
+    public string Url = "/api/Cliente";
 
     private async Task Save()
     {
-       var Respuesta = await Http.PostAsJsonAsync<Cliente>(Url, oCliente);
-        oRespuesta = Respuesta.Content.ReadFromJsonAsync<Respuestas>().Result;
+        if (Id != 0)
+        {
+            var Respuesta = await Http.PutAsJsonAsync<Cliente>(Url, oCliente);
+            oRespuesta = Respuesta.Content.ReadFromJsonAsync<Respuestas<object>>().Result;
+
+        }
+        else
+        {
+            var Respuesta = await Http.PostAsJsonAsync<Cliente>(Url, oCliente);
+            oRespuesta = Respuesta.Content.ReadFromJsonAsync<Respuestas<object>>().Result;
+        }
+
         Navegador.NavigateTo("clientes");
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(Id != 0)
+        {
+            oRespuestaCliente = await Http.GetFromJsonAsync<Respuestas<Cliente>>(Url + "/" + Id);
+            oCliente = oRespuestaCliente.Data;
+        }
+    }
+
 }
